@@ -127,8 +127,8 @@ Behavior:
 ## 1️⃣ Clone Repository
 
 ```
-git clone <your-repo-url>
-cd <project-folder>
+git clone https://github.com/Vinayak45541/Celebrare_A1.git
+
 ```
 
 ## 2️⃣ Install Dependencies
