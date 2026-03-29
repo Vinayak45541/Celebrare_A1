@@ -1,259 +1,434 @@
-# 🔐 React Auth + Protected Routes with TTL (Celebrare Assignment 1)
+# 🎉 Celebrare Assignment — React Auth + Firestore Events Dashboard
 
-This project demonstrates a complete authentication flow using **React**, **Firebase Google Authentication**, **Protected Routes**, and **LocalStorage session persistence with TTL (Time-To-Live)**.
+This project implements authentication, protected routing, session persistence, and Firestore-based event management using React, Firebase, and Context API.
 
----
-
-# 🚀 Features Implemented
-
-## ✅ Google Login (Firebase Authentication)
-
-* User logs in using Google account
-* Firebase Authentication handles secure login
-* User name and email are retrieved after login
-
-## ✅ Protected Route (`/dashboard`)
-
-* Dashboard is accessible **only when logged in**
-* Unauthorized users are automatically redirected to login page
-
-## ✅ LocalStorage with TTL (24 Hours)
-
-* User session stored in localStorage
-* Expiry timestamp added (24-hour TTL)
-* Expired sessions automatically removed
-
-## ✅ Session Restore on Refresh
-
-* User remains logged in after refreshing page
-* Session restored automatically if TTL not expired
-
-## ✅ Logout Functionality
-
-* Clears localStorage
-* Ends Firebase session
-* Redirects user back to login page
+It is built incrementally across Assignment 1 and Assignment 2.
 
 ---
 
-# 🧠 What is TTL (Time-To-Live)?
+# 🚀 Features
 
-TTL defines how long stored data remains valid.
+## 🔐 Authentication (Assignment 1)
 
-In this project:
-
-* User data is saved with an expiry timestamp
-* TTL is set to **24 hours**
-* When the app reloads:
-
-  * Expiry time is checked
-  * If expired → session removed
-  * If valid → session restored
-
-This prevents stale sessions and improves security.
+* Google Login using Firebase Authentication
+* Protected Route (`/dashboard`)
+* Redirect to login if not authenticated
+* User session stored in `localStorage`
+* Session restored automatically on refresh
+* Session expiry using TTL (24 hours)
+* Logout clears stored session
 
 ---
 
-# 🏗️ Project Structure
+## 📊 Events Dashboard (Assignment 2)
 
+* Firestore database integration
+* Fetch events from Firestore
+* Display events in responsive card grid
+* Real-time search filtering
+* Remember last clicked event
+* Restore highlighted card after refresh
+* Move last clicked card to top
+* Remove highlight when clicking empty space
+* Loading skeleton shown during data fetch
+
+---
+
+# 🧠 Tech Stack
+
+```text
+React (Vite)
+Firebase Authentication
+Firestore Database
+React Context API
+React Router
+Tailwind CSS
+localStorage
 ```
+
+---
+
+# 📂 Project Structure
+
+```text
 src/
+
+├── components/
+│   ├── EventCard.jsx
+│   ├── EventGrid.jsx
+│   ├── SearchBar.jsx
+│   └── LoadingSkeleton.jsx
 │
 ├── context/
-│   └── AuthContext.jsx        # Authentication state management
-│
-├── routes/
-│   └── ProtectedRoute.jsx     # Route protection logic
-│
-├── pages/
-│   ├── Login.jsx              # Login UI
-│   └── Dashboard.jsx          # Dashboard UI
-│
-├── utils/
-│   └── appStorage.js          # TTL storage logic
+│   ├── AuthContext.jsx
+│   └── EventContext.jsx
 │
 ├── firebase/
-│   └── firebase.js            # Firebase setup
+│   └── firebase.js
 │
-├── App.jsx                    # Route configuration
-├── main.jsx                   # App entry point
+├── pages/
+│   ├── Login.jsx
+│   └── Dashboard.jsx
+│
+├── routes/
+│   └── ProtectedRoute.jsx
+│
+├── utils/
+│   └── appStorage.js
+│
+├── App.jsx
+└── main.jsx
 ```
 
 ---
 
-# 🔄 Authentication Flow
+# 🔐 Authentication Flow
 
-1. User clicks **Login with Google**
-2. Firebase authentication popup opens
-3. User selects Google account
-4. Name and email are stored in localStorage with TTL
-5. User redirected to `/dashboard`
-6. On refresh:
-
-   * Stored session checked
-   * If valid → dashboard restored
-7. On logout:
-
-   * localStorage cleared
-   * Redirect to login
+```text
+User clicks Login
+↓
+Firebase Google Authentication
+↓
+User data stored in localStorage
+↓
+TTL expiry timestamp stored
+↓
+Dashboard access allowed
+```
 
 ---
 
-# 🔐 Protected Route Logic
+# ⏳ TTL (Time-To-Live)
 
-The dashboard route is wrapped using:
+TTL ensures session expiration after 24 hours.
 
-ProtectedRoute
+### TTL Logic:
+
+```text
+Current Time + 24 hours = Expiry Time
+```
+
+### Why TTL Exists:
+
+* Prevent stale sessions
+* Improve security
+* Automatically expire login session
+* Avoid permanent login storage
+
+---
+
+# 📦 Firestore Integration
+
+Firestore is used to store event data.
+
+Collection:
+
+```text
+events
+```
+
+Each document contains:
+
+```text
+name → string  
+date → string  
+location → string  
+```
+
+Example document:
+
+```text
+name: Music Night  
+date: 2026-04-10  
+location: Bangalore
+```
+
+---
+
+# 📊 Event Flow
+
+```text
+Dashboard loads
+↓
+fetchEvents() runs
+↓
+Firestore queried
+↓
+Events stored in Context
+↓
+Cards rendered
+```
+
+---
+
+# 🔎 Search Functionality
+
+Search filters events in real-time.
+
+```text
+User types text
+↓
+Events filtered locally
+↓
+Matching cards displayed
+```
+
+No reload required.
+
+---
+
+# ⭐ Last Clicked Event Persistence
 
 Behavior:
 
-* If user exists → Allow dashboard
-* If user does not exist → Redirect to `/`
-
----
-
-# 🛠️ Technologies Used
-
-* React (Vite)
-* Firebase Authentication
-* React Router DOM
-* Tailwind CSS
-* LocalStorage API
-
----
-
-# ⚙️ Setup Instructions
-
-## 1️⃣ Clone Repository
-
+```text
+User clicks event
+↓
+Event ID stored in localStorage
+↓
+Page refresh
+↓
+Same event highlighted
+↓
+Event moved to top
 ```
+
+Only the **last clicked event** is remembered.
+
+---
+
+# 🧱 Loading Skeleton
+
+Skeleton UI appears while fetching events.
+
+Includes:
+
+```text
+Dashboard header skeleton
+Search bar skeleton
+Event card skeletons
+```
+
+Improves perceived performance.
+
+---
+
+# 🛡 Protected Routes
+
+Dashboard access is restricted.
+
+Logic:
+
+```text
+If user exists → allow access  
+If user missing → redirect to login  
+```
+
+Prevents unauthorized access.
+
+---
+
+# 🧩 Context API Usage
+
+Two contexts are used:
+
+## AuthContext
+
+Provides:
+
+```text
+user
+login()
+logout()
+loading
+```
+
+Handles authentication state.
+
+---
+
+## EventContext
+
+Provides:
+
+```text
+events
+loading
+selectedEventId
+selectEvent()
+clearSelection()
+fetchEvents()
+```
+
+Handles:
+
+* Firestore fetching
+* Event storage
+* Highlight persistence
+
+---
+
+# 🔁 Session Restore Flow
+
+```text
+Page refresh
+↓
+localStorage checked
+↓
+TTL validated
+↓
+Session restored if valid
+↓
+User stays logged in
+```
+
+---
+
+# 🖥 UI Behavior
+
+### Event Cards
+
+* Responsive grid layout
+* Hover animation
+* Highlighted selected card
+* Selected card moves to top
+
+---
+
+### Highlight Behavior
+
+```text
+Click card → highlight  
+Click another → previous removed  
+Refresh → last clicked highlighted  
+Click empty space → highlight removed  
+```
+
+Only **one highlighted card** at a time.
+
+---
+
+# 📦 Installation
+
+Clone repository:
+
+```bash
 git clone https://github.com/Vinayak45541/Celebrare_A1.git
 ```
 
-## 2️⃣ Install Dependencies
+Install dependencies:
 
-```
+```bash
 npm install
 ```
 
-## 3️⃣ Run Development Server
+Run project:
 
-```
+```bash
 npm run dev
 ```
 
-Open:
+---
 
+# 🔧 Firebase Setup
+
+1. Create Firebase project
+2. Enable Google Authentication
+3. Enable Firestore Database
+4. Create collection:
+
+```text
+events
 ```
-http://localhost:5173
+
+Add 5–10 sample documents.
+
+Update:
+
+```text
+src/firebase/firebase.js
+```
+
+With your Firebase config.
+
+---
+
+# 🎯 Assignment Objectives Covered
+
+## Assignment 1
+
+```text
+✔ React + Vite setup
+✔ Google login
+✔ Protected routes
+✔ localStorage session
+✔ TTL expiry logic
+✔ Logout handling
 ```
 
 ---
 
-# 🧪 Testing Steps
+## Assignment 2
 
-## Login Flow
-
-1. Click **Login with Google**
-2. Select Google account
-3. Dashboard opens
-
----
-
-## LocalStorage Check
-
-Open:
-
-DevTools → Application → LocalStorage
-
-Verify:
-
-```
-user → value + expiry timestamp
+```text
+✔ Firestore database usage
+✔ Fetch events
+✔ Display card grid
+✔ Real-time search
+✔ Highlight persistence
+✔ Loading skeleton
+✔ Context-based global state
 ```
 
 ---
 
-## Session Restore
+# 🧪 Testing Scenarios
 
-Refresh page:
+Verified behaviors:
 
-```
-F5
-```
-
-Expected:
-
-```
-Dashboard loads without login
-```
-
----
-
-## Logout Test
-
-Click:
-
-```
-Logout
-```
-
-Expected:
-
-```
-User redirected to login
-LocalStorage cleared
+```text
+✔ Login → Skeleton → Cards
+✔ Search filters correctly
+✔ Click card → refresh restores
+✔ Selected card moves to top
+✔ Empty click clears highlight
+✔ Logout redirects to login
+✔ Protected routes enforced
 ```
 
 ---
 
-# 📌 Key Files Overview
+# 📌 Key Concepts Demonstrated
 
-## AuthContext.jsx
-
-Handles:
-
-* Login
-* Logout
-* Session restore
-* Global authentication state
-
----
-
-## appStorage.js
-
-Handles:
-
-* Saving user with TTL
-* Checking expiry
-* Removing expired sessions
+```text
+React Context API
+State Management
+Firestore Integration
+Authentication Flow
+Session Persistence
+UI Loading States
+Event Handling
+Protected Routing
+```
 
 ---
 
-## ProtectedRoute.jsx
+# 🎥 Demo Requirements Covered
 
-Handles:
+The implementation demonstrates:
 
-* Blocking unauthorized access
-* Redirecting users
-
----
-
-# 🎯 Assignment Coverage
-
-This project fulfills all required tasks:
-
-* React + Vite + Tailwind setup
-* Firebase Google login
-* Protected dashboard route
-* LocalStorage with TTL
-* Session restore after refresh
-* Logout functionality
-
+```text
+✔ Dashboard loading events from Firestore
+✔ Search filtering working live
+✔ Last clicked card restoring after refresh
+✔ Context usage explanation
+✔ Loading skeleton behavior
+```
 
 ---
 
 # 👨‍💻 Author
 
-Vinayak
-React Authentication Assignment — Celebrare Internship
+**Vinayak**
+Computer Science Engineering Student
+Backend & Full Stack Development Focus
