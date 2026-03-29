@@ -1,6 +1,7 @@
 // 24 hours TTL in miliseconds
 const TTL = 24 * 60 * 60 * 1000;
 
+
 export const setUserWithTTL = (key, value) => {
 
   const now = new Date().getTime();
@@ -28,7 +29,7 @@ export const getUserWithTTL = (key) => {
     localStorage.removeItem(key);
     return null;
   }
-  
+
   return item.value;
 };
 
