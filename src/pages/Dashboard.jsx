@@ -9,7 +9,6 @@ import LoadingSkeleton from "../components/LoadingSkeleton";
 const Dashboard = () => {
 
   const { logout } = useAuth();
-
   const { events, loading, fetchEvents } = useEvents();
   const [searchTerm, setSearchTerm] = useState("");
 
@@ -23,12 +22,11 @@ const Dashboard = () => {
     events.filter((event) =>
       event.name
         .toLowerCase()
-        .includes(
-          searchTerm.toLowerCase()
-        )
+        .includes( searchTerm.toLowerCase() )
     );
 
-  if (loading) return <LoadingSkeleton />;
+  if (loading) 
+    return <LoadingSkeleton />;
 
   return (
 

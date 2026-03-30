@@ -8,14 +8,12 @@ export const EventProvider = ({ children }) => {
 
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [selectedEventId, setSelectedEventId] = useState( localStorage.getItem("lastEvent") || null );
 
-  const [selectedEventId, setSelectedEventId] =
-    useState( localStorage.getItem("lastEvent") || null );
-
-  // Fetch events (called manually now)
+  // Fetch events 
   const fetchEvents = async () => {
-    setLoading(true); // IMPORTANT
 
+    setLoading(true); 
     try {
       const querySnapshot = await getDocs( collection(db, "events") );
       let eventList = [];
@@ -35,7 +33,7 @@ export const EventProvider = ({ children }) => {
         console.error( "Error fetching events:", error ) 
     } finally {
          setLoading(false) 
-        }
+    }
   };
 
   // Select event
